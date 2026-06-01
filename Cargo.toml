@@ -1,3 +1,3 @@
 [workspace]
 resolver="3"
-members = ["crates/tachyoo_protocol"]
+members = ["crates/tachyoo_cli","crates/tachyoo_protocol"]
