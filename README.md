@@ -1,2 +1,2 @@
-# Tachyoos
+# tachyoo
 a minecraft server
