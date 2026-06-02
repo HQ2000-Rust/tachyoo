@@ -1,5 +1,5 @@
 ////// INT
-mod int {
+pub mod int {
 
     use std::ops::Deref;
 
@@ -10,11 +10,11 @@ mod int {
         buffer: Box<[u8]>,
     }
 
-    pub fn var_int(num: i64) -> VarInt {
+    pub fn var_int(num: i32) -> VarInt {
         let capacity_approx = 0;
         let mut bytes = Vec::with_capacity(capacity_approx);
 
-        match leb128::write::signed(&mut bytes, num) {
+        match leb128::write::signed(&mut bytes, num as i64) {
             Ok(_bytes_written) => VarInt {
                 buffer: bytes.into_boxed_slice(),
             },
@@ -37,7 +37,15 @@ pub mod long {
     use crate::out::Transfer;
 
     pub fn var_long(num: i64) -> VarLong {
-        todo!()
+        let capacity_approx = 0;
+        let mut bytes = Vec::with_capacity(capacity_approx);
+
+        match leb128::write::signed(&mut bytes, num) {
+            Ok(_bytes_written) => VarLong {
+                buffer: bytes.into_boxed_slice(),
+            },
+            Err(_) => unreachable!("Vec's Write::write() impl never returns an error"),
+        }
     }
 
     #[repr(transparent)]
