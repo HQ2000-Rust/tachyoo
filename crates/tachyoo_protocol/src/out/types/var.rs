@@ -3,6 +3,8 @@ mod int {
 
     use std::ops::Deref;
 
+    use crate::out::Transfer;
+
     // #[repr(transparent)]
     pub struct VarInt {
         buffer: Box<[u8]>,
@@ -25,11 +27,18 @@ mod int {
             &self.buffer.deref().as_ref()
         }
     }
+    impl Transfer for VarInt {}
 }
 
 pub mod long {
 
     use std::ops::Deref;
+
+    use crate::out::Transfer;
+
+    pub fn var_long(num: i64) -> VarLong {
+        todo!()
+    }
 
     #[repr(transparent)]
     pub struct VarLong {
@@ -41,6 +50,8 @@ pub mod long {
             &self.buffer.deref().as_ref()
         }
     }
+
+    impl Transfer for VarLong {}
 }
 
 pub mod error {
