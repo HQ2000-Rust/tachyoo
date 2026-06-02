@@ -39,14 +39,14 @@ pub mod unprefixed {
 }
 
 pub mod prefixed {
-    use tokio::io;
+    use tokio::io::{self, AsyncWriteExt};
 
-    use crate::out::{IntoTransferable, Transfer};
+    use crate::out::Transfer;
 
     #[derive()]
     pub struct PrefixedOptional<T>(Option<T>);
 
-    impl<T> IntoTransferable for PrefixedOptional<T>
+    /*impl<T> IntoTransferable for PrefixedOptional<T>
     where
         T: IntoTransferable,
         <T as IntoTransferable>::Transferable: Send + Sync,
@@ -57,7 +57,25 @@ pub mod prefixed {
         fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
             Ok(PrefixedOptional(
                 self.map(|t| t.try_into_transferable()).transpose()?,
+
             ))
+        }
+    }*/
+
+    impl<T> PrefixedOptional<T>
+    where
+        T: Transfer,
+    {
+        pub fn some(transferable: T) -> PrefixedOptional<T> {
+            PrefixedOptional(Some(transferable))
+        }
+
+        pub fn none() -> PrefixedOptional<T> {
+            PrefixedOptional(Option::None)
+        }
+
+        pub fn new(transferable_opt: Option<T>) -> PrefixedOptional<T> {
+            PrefixedOptional(transferable_opt)
         }
     }
 
@@ -72,6 +90,7 @@ pub mod prefixed {
         ) -> Result<(), io::Error> {
             match self.0 {
                 Some(ref t) => t.write_to_tcp_stream(stream).await,
+
                 None => Ok(()),
             }
         }
