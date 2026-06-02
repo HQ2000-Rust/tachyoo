@@ -1,7 +1,7 @@
 ////// INT
 pub mod int {
 
-    use std::{convert::Infallible};
+    use std::convert::Infallible;
 
     use tokio::io;
 
