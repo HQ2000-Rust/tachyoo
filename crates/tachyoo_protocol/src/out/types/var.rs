@@ -1,13 +1,9 @@
 ////// INT
 pub mod int {
 
-    use std::convert::Infallible;
-
     use tokio::io;
 
-    use tokio::io::AsyncWriteExt;
-
-    use crate::out::{IntoTransferable, Transfer};
+    use crate::out::{Transfer, Writable};
 
     // #[repr(transparent)]
     pub struct VarInt {
@@ -46,11 +42,8 @@ pub mod int {
 
     #[async_trait::async_trait]
     impl Transfer for VarInt {
-        async fn write_to_tcp_stream(
-            &self,
-            mut stream: tokio::net::TcpStream,
-        ) -> Result<(), io::Error> {
-            stream.write_all(&self.data).await
+        async fn write_data(&self, writable: &mut Writable) -> io::Result<()> {
+            writable.write_all(&self.data).await
         }
     }
 }
@@ -58,11 +51,7 @@ pub mod int {
 pub mod long {
     use tokio::io;
 
-    use std::convert::Infallible;
-
-    use tokio::io::AsyncWriteExt;
-
-    use crate::out::Transfer;
+    use crate::out::{Transfer, Writable};
 
     /*impl IntoTransferable for i64 {
         type Transferable = VarLong;
@@ -101,11 +90,8 @@ pub mod long {
 
     #[async_trait::async_trait]
     impl Transfer for VarLong {
-        async fn write_to_tcp_stream(
-            &self,
-            mut stream: tokio::net::TcpStream,
-        ) -> Result<(), io::Error> {
-            stream.write_all(&self.data).await
+        async fn write_data(&self, writable: &mut Writable) -> Result<(), io::Error> {
+            writable.write_all(&self.data).await
         }
     }
 }
