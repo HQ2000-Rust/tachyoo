@@ -31,9 +31,8 @@ where
 #[async_trait::async_trait]
 impl<T> Transfer for Array<T>
 where
-    T: IntoIterator + Send + Sync + Clone,
-    <T as IntoIterator>::IntoIter: Send +Sync,
-    <T as IntoIterator>::Item: Transfer + Send + Sync,
+    T: Iterator + Send + Sync + Clone,
+    <T as Iterator>::Item: Transfer + Send + Sync,
 {
     async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
         for item in self.iter.clone() {
@@ -43,34 +42,21 @@ where
     }
 }
 
-
 pub struct PrefixedArray<T> {
     iter: T,
 }
 
-
-
 impl<T> PrefixedArray<T>
 where
-    T: IntoIterator,
-    <T as IntoIterator>::IntoIter: ExactSizeIterator,
-    <T as IntoIterator>::Item: Transfer,
+    T: ExactSizeIterator,
+    <T as Iterator>::Item: Transfer,
 {
     pub fn new(iter: T) -> PrefixedArray<T> {
         PrefixedArray { iter }
     }
-}
 
-
-impl<T> PrefixedArray<T>
-where
-    T: IntoIterator + Clone,
-    <T as IntoIterator>::IntoIter: ExactSizeIterator,
-    <T as IntoIterator>::Item: Transfer,
-{
-    //TODO: better way? maybe just iterator? or just store the length?
     pub fn len(&self) -> usize {
-        self.iter.clone().into_iter().len()
+        self.iter.len()
     }
 }
 
@@ -81,14 +67,15 @@ where
     <T as Iterator>::Item: Transfer + Send + Sync,
 {
     async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
+        VarInt::new(self.iter.len() as i32)
+            .write_data(writeable)
+            .await?;
 
-        VarInt::new(self.iter.len() as i32).write_data(writeable).await?;
-        
         for item in self.iter.clone() {
             item.write_data(writeable).await?;
         }
-        //TODO
-        //debug_assert!(count == expected);
+        
+        //TODO: debug_assert!(count == expected)
         Ok(())
     }
 }
