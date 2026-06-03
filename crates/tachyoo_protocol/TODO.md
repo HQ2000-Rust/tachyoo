@@ -1,13 +1,13 @@
 - data types
-  - [ ] Boolean
-  - [ ] Byte
-  - [ ] Unsigned Byte
-  - [ ] Short
-  - [ ] Unsigned Short
-  - [ ] Int
-  - [ ] Long
-  - [ ] Float
-  - [ ] Double
+  - [x] Boolean
+  - [x] Byte
+  - [x] Unsigned Byte
+  - [x] Short
+  - [x] Unsigned Short
+  - [x] Int
+  - [x] Long
+  - [x] Float
+  - [x] Double
   - [ ] String (n)
   - [ ] Text Component
   - [ ] JSON Text Component
@@ -21,15 +21,15 @@
   - [~] Position
   - [ ] Angle
   - [ ] UUID
-  - [ ] BitSet
+  - [x] BitSet
   - [ ] Fixed BitSet (n)
-  - [ ] Optional X
-  - [ ] Prefixed Optional
+  - [x] Optional X
+  - [x] Prefixed Optional
   - [x] Array of X
   - [x] Prefixed Array
   - [ ] X Enum
   - [ ] EnumSet (n)
-  - [ ] Byte Array
+  - [x] Byte Array
   - [ ] ID or X
   - [ ] ID Set
   - [ ] Sound Event
