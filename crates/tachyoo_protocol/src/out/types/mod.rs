@@ -114,3 +114,5 @@ impl Transfer for UUID {
 }
 
 type ByteArray = Array<u8>;
+
+type Angle = u8;
