@@ -9,6 +9,7 @@ use crate::out::{Transfer, Writable, types::array::Array};
 
 pub mod array;
 pub mod bitset;
+pub mod either;
 pub mod entity_metadata;
 pub mod fixed_point;
 pub mod identifier;
