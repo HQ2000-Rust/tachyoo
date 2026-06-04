@@ -1,6 +1,12 @@
 //WIP
 //TODO: ascii memory optimization, maybe ascii chars (when asciiChar becomes stable)
 
+use crate::out::{Transfer, Writable};
+
+use tokio::io;
+
+//todo: more efficient and ergonomic (if applicable) repr
+
 pub struct Identifier {
     //only contains a-z, 0-9, '.', '-' and '_', also cannot be '..'
     namespace: NamespaceId,
@@ -8,7 +14,6 @@ pub struct Identifier {
     path: PathId,
 }
 
-//maybe IdChar if neccessary
 pub struct NamespaceId(Box<str>);
 
 pub struct PathId(Box<str>);
@@ -27,6 +32,10 @@ impl NamespaceId {
 impl TryFrom<String> for NamespaceId {
     type Error = ();
     fn try_from(string: String) -> Result<NamespaceId, ()> {
+        if string.as_str() == ".." {
+            return Err(());
+        }
+
         for character in string.chars() {
             if !NamespaceId::ALLOWED_CHARS.contains(&character) {
                 return Err(());
@@ -73,5 +82,16 @@ impl Identifier {
     }
     fn from_namespace_and_path(namespace: NamespaceId, path: PathId) -> Identifier {
         Identifier { namespace, path }
+    }
+}
+
+#[async_trait::async_trait]
+impl Transfer for Identifier {
+    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
+        writeable.write_all(self.namespace.0.as_bytes()).await?;
+        writeable.write_all(b":").await?;
+        writeable.write_all(self.path.0.as_bytes()).await?;
+
+        Ok(())
     }
 }

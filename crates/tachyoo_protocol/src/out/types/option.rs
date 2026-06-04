@@ -7,9 +7,7 @@ pub mod unprefixed {
     pub struct Optional<T>(Option<T>);
 
     //bound neccessary
-    impl<T> Optional<T>
-
-    {
+    impl<T> Optional<T> {
         pub fn some(transferable: T) -> Optional<T> {
             Optional(Some(transferable))
         }
@@ -22,22 +20,6 @@ pub mod unprefixed {
             Optional(transferable_opt)
         }
     }
-
-    /*
-    impl<T> IntoTransferable for Option<T>
-    where
-        T: IntoTransferable,
-        <T as IntoTransferable>::Transferable: Send + Sync,
-    {
-        type Transferable = Optional<<T as IntoTransferable>::Transferable>;
-        type Error = <T as IntoTransferable>::Error;
-
-        fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
-            Ok(Optional(
-                self.map(|t| t.try_into_transferable()).transpose()?,
-            ))
-        }
-    }*/
 
     #[async_trait::async_trait]
     impl<T> Transfer for Optional<T>
@@ -60,22 +42,6 @@ pub mod prefixed {
 
     #[derive()]
     pub struct PrefixedOptional<T>(Option<T>);
-
-    /*impl<T> IntoTransferable for PrefixedOptional<T>
-    where
-        T: IntoTransferable,
-        <T as IntoTransferable>::Transferable: Send + Sync,
-    {
-        type Transferable = PrefixedOptional<<T as IntoTransferable>::Transferable>;
-        type Error = <T as IntoTransferable>::Error;
-
-        fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
-            Ok(PrefixedOptional(
-                self.map(|t| t.try_into_transferable()).transpose()?,
-
-            ))
-        }
-    }*/
 
     impl<T> PrefixedOptional<T>
     where

@@ -24,22 +24,6 @@ pub mod int {
         }
     }
 
-    /*impl IntoTransferable for i32 {
-        type Transferable = VarInt;
-        type Error = Infallible;
-        fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
-            let capacity_approx = 0;
-            let mut bytes = Vec::with_capacity(capacity_approx);
-
-            match leb128::write::signed(&mut bytes, self as i64) {
-                Ok(_bytes_written) => Ok(VarInt {
-                    data: bytes.into_boxed_slice(),
-                }),
-                Err(_) => unreachable!("Vec's Write::write() impl never returns an error"),
-            }
-        }
-    }*/
-
     #[async_trait::async_trait]
     impl Transfer for VarInt {
         async fn write_data(&self, writable: &mut Writable) -> io::Result<()> {
@@ -52,22 +36,6 @@ pub mod long {
     use tokio::io;
 
     use crate::out::{Transfer, Writable};
-
-    /*impl IntoTransferable for i64 {
-        type Transferable = VarLong;
-        type Error = Infallible;
-        fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
-            let capacity_approx = 0;
-            let mut bytes = Vec::with_capacity(capacity_approx);
-
-            match leb128::write::signed(&mut bytes, self) {
-                Ok(_bytes_written) => Ok(VarLong {
-                    data: bytes.into_boxed_slice(),
-                }),
-                Err(_) => unreachable!("Vec's Write::write() impl never returns an error"),
-            }
-        }
-    }*/
 
     #[repr(transparent)]
     pub struct VarLong {

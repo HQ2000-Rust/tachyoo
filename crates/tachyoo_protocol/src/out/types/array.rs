@@ -1,17 +1,6 @@
 use crate::out::{Transfer, Writable, types::var::int::VarInt};
 
-use tokio::io::{self, AsyncWriteExt};
-
-/*
-impl<T, I> IntoTransferable for T where T: Iterator<Item=I>, I: Transfer {
-    type Transferable = Array<T>;
-    type Error = Infallible;
-
-    fn try_into_transferable(self) -> Result<Self::Transferable, Self::Error> {
-        Ok(Array(self))
-    }
-}
-*/
+use tokio::io;
 
 //TODO: opt: dense array write (if Transfer gets removed)
 pub struct Array<T> {

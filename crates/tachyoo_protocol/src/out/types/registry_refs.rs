@@ -2,12 +2,7 @@ use tokio::io;
 
 use crate::out::{
     Transfer, Writable,
-    types::{
-        array::Array,
-        identifier::Identifier,
-        option::unprefixed::Optional,
-        var::int::VarInt,
-    },
+    types::{array::Array, identifier::Identifier, option::unprefixed::Optional, var::int::VarInt},
 };
 
 //TODO: would enums be better?

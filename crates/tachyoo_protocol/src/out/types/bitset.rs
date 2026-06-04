@@ -4,10 +4,7 @@ use tokio::io;
 
 use crate::out::{
     Transfer, Writable,
-    types::{
-        Long,
-        array::PrefixedArray,
-    },
+    types::{Long, array::PrefixedArray},
 };
 
 pub struct BitSet {
