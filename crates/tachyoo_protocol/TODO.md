@@ -37,7 +37,7 @@
   - [ ] Teleport Flags
   - [ ] Recipe Display
   - [ ] Slot Display
-  - [ ] Light Data
+  - [x] Light Data
   - [ ] Either X or Y
   - [ ] Game Profile
   - [ ] Resolvable Profile
