@@ -33,6 +33,10 @@ where
 
         Array { data }
     }
+
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
 }
 
 #[async_trait::async_trait]
