@@ -8,7 +8,7 @@ pub struct IdOrX<X> {
     x: Optional<X>,
 }
 
-impl<X> IdOrX<X> where X: Transfer {
+impl<X> IdOrX<X> {
     //TODO: determine valid registry id range!!
     pub fn id(id: i32) -> IdOrX<X> {
         IdOrX { id: VarInt::new(id +1), x: Optional::none() }

@@ -6,9 +6,9 @@ pub mod unprefixed {
     #[derive()]
     pub struct Optional<T>(Option<T>);
 
+    //bound neccessary
     impl<T> Optional<T>
-    where
-        T: Transfer,
+
     {
         pub fn some(transferable: T) -> Optional<T> {
             Optional(Some(transferable))
