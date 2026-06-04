@@ -22,7 +22,7 @@
   - [ ] Angle
   - [ ] UUID
   - [x] BitSet
-  - [ ] Fixed BitSet (n)
+  - [~] Fixed BitSet (n)
   - [x] Optional X
   - [x] Prefixed Optional
   - [x] Array of X
@@ -32,7 +32,7 @@
   - [x] Byte Array
   - [ ] ID or X
   - [ ] ID Set
-  - [ ] Sound Event
+  - [x] Sound Event
   - [ ] Chat Type
   - [ ] Teleport Flags
   - [ ] Recipe Display
