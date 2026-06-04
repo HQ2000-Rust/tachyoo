@@ -11,7 +11,7 @@
   - [ ] String (n)
   - [ ] Text Component
   - [ ] JSON Text Component
-  - [ ] Identifier
+  - [x] Identifier
   - [x] VarInt
   - [x] VarLong
   - [ ] Entity Metadata
@@ -19,28 +19,28 @@
   - [ ] Hashed Slot
   - [ ] NBT
   - [~] Position
-  - [ ] Angle
-  - [ ] UUID
+  - [x] Angle
+  - [x] UUID
   - [x] BitSet
   - [~] Fixed BitSet (n)
   - [x] Optional X
   - [x] Prefixed Optional
   - [x] Array of X
   - [x] Prefixed Array
-  - [ ] X Enum
-  - [ ] EnumSet (n)
+  - [~] X Enum
+  - [~] EnumSet (n)
   - [x] Byte Array
-  - [ ] ID or X
-  - [ ] ID Set
+  - [x] ID or X
+  - [x] ID Set
   - [x] Sound Event
   - [ ] Chat Type
-  - [ ] Teleport Flags
+  - [x] Teleport Flags
   - [ ] Recipe Display
   - [ ] Slot Display
   - [x] Light Data
-  - [ ] Either X or Y
-  - [ ] Game Profile
-  - [ ] Resolvable Profile
+  - [x] Either X or Y
+  - [~] Game Profile
+  - [~] Resolvable Profile
   - [ ] Debug Subscription Event
   - [ ] Debug Subscription Update
   - [ ] LpVec3
