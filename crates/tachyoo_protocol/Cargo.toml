@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 async-trait = "0.1.89"
+bitflags = "2.12.1"
 bytes = "1.11.1"
 flate2 = "1.1.9"
 leb128 = "0.2.6"
