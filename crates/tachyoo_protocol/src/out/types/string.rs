@@ -1,6 +1,4 @@
-use tokio::io;
-
-use crate::out::{Transfer, Writable, types::var::int::VarInt};
+use crate::out::{Buffer, Transfer, types::var::int::VarInt};
 
 //better name!
 pub struct McString<const MAX_LENGTH: u16> {
@@ -76,12 +74,9 @@ impl<const MAX_LENGTH: u16> TryFrom<Box<str>> for McString<MAX_LENGTH> {
 #[error("Failed to convert into a McString")]
 pub struct McStringError(());
 
-#[async_trait::async_trait]
 impl<const MAX_LENGTH: u16> Transfer for McString<MAX_LENGTH> {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.len.write_data(writeable).await?;
-        writeable.write_all(self.data.as_bytes()).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.len.write_bytes(buf);
+        buf.write_all(self.data.as_bytes());
     }
 }

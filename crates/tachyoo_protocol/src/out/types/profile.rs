@@ -1,7 +1,5 @@
-use tokio::io;
-
 use crate::out::{
-    Transfer, Writable,
+    Buffer, Transfer,
     types::{
         UUID,
         array::PrefixedArray,
@@ -32,25 +30,22 @@ enum Unpack {
     Complete(GameProfile),
 }
 
-#[async_trait::async_trait]
 impl Transfer for Unpack {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
+    fn write_bytes(&self, buf: &mut Buffer) {
         match self {
             Unpack::Complete(profile) => {
-                profile.write_data(writeable).await?;
+                profile.write_bytes(buf);
             }
             Unpack::Partial {
                 username,
                 uuid,
                 props,
             } => {
-                username.write_data(writeable).await?;
-                uuid.write_data(writeable).await?;
-                props.write_data(writeable).await?;
+                username.write_bytes(buf);
+                uuid.write_bytes(buf);
+                props.write_bytes(buf);
             }
         }
-
-        Ok(())
     }
 }
 
@@ -59,17 +54,14 @@ impl ResolvableProfile {
     //pub fn new
 }
 
-#[async_trait::async_trait]
 impl Transfer for ResolvableProfile {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.profile_kind.write_data(writeable).await?;
-        self.unpack.write_data(writeable).await?;
-        self.body.write_data(writeable).await?;
-        self.cape.write_data(writeable).await?;
-        self.elytra.write_data(writeable).await?;
-        self.model.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.profile_kind.write_bytes(buf);
+        self.unpack.write_bytes(buf);
+        self.body.write_bytes(buf);
+        self.cape.write_bytes(buf);
+        self.elytra.write_bytes(buf);
+        self.model.write_bytes(buf);
     }
 }
 
@@ -86,24 +78,18 @@ struct GameProfileProp {
     signature: PrefixedOptional<McString<1024>>,
 }
 
-#[async_trait::async_trait]
 impl Transfer for GameProfileProp {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.name.write_data(writeable).await?;
-        self.val.write_data(writeable).await?;
-        self.signature.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.name.write_bytes(buf);
+        self.val.write_bytes(buf);
+        self.signature.write_bytes(buf);
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for GameProfile {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.uuid.write_data(writeable).await?;
-        self.username.write_data(writeable).await?;
-        self.props.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.uuid.write_bytes(buf);
+        self.username.write_bytes(buf);
+        self.props.write_bytes(buf);
     }
 }

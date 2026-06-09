@@ -1,9 +1,7 @@
 //WIP
 //TODO: ascii memory optimization, maybe ascii chars (when asciiChar becomes stable)
 
-use crate::out::{Transfer, Writable};
-
-use tokio::io;
+use crate::out::{Buffer, Transfer};
 
 //todo: more efficient and ergonomic (if applicable) repr
 
@@ -85,13 +83,10 @@ impl Identifier {
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for Identifier {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(self.namespace.0.as_bytes()).await?;
-        writeable.write_all(b":").await?;
-        writeable.write_all(self.path.0.as_bytes()).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut crate::out::Buffer) {
+        buf.write_all(self.namespace.0.as_bytes());
+        buf.write_all(b":");
+        buf.write_all(self.path.0.as_bytes());
     }
 }

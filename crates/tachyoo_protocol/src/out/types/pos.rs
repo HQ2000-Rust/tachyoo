@@ -1,6 +1,4 @@
-use tokio::io;
-
-use crate::out::{Transfer, Writable};
+use crate::out::{Buffer, Transfer};
 
 pub struct Pos {
     data: [u8; 8],
@@ -46,9 +44,8 @@ impl Pos {
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for Pos {
-    async fn write_data(&self, writer: &mut Writable) -> io::Result<()> {
-        writer.write_all(&self.data).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.data);
     }
 }

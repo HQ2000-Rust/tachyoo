@@ -1,76 +1,66 @@
 pub mod unprefixed {
-    use tokio::io;
 
-    use crate::out::{Transfer, Writable};
+    use crate::out::{Buffer, Transfer};
 
     #[derive()]
     pub struct Optional<T>(Option<T>);
 
-    //bound neccessary
     impl<T> Optional<T> {
-        pub fn some(transferable: T) -> Optional<T> {
-            Optional(Some(transferable))
+        pub fn some(val: T) -> Optional<T> {
+            Optional(Some(val))
         }
 
         pub fn none() -> Optional<T> {
             Optional(Option::None)
         }
 
-        pub fn new(transferable_opt: Option<T>) -> Optional<T> {
-            Optional(transferable_opt)
+        pub fn new(val_opt: Option<T>) -> Optional<T> {
+            Optional(val_opt)
         }
     }
 
-    #[async_trait::async_trait]
     impl<T> Transfer for Optional<T>
     where
         T: Transfer + Send + Sync,
     {
-        async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-            match self.0 {
-                Some(ref t) => t.write_data(writeable).await,
-                None => Ok(()),
+        fn write_bytes(&self, buf: &mut Buffer) {
+            if let Some(ref t) = self.0 {
+                t.write_bytes(buf);
             }
         }
     }
 }
 
 pub mod prefixed {
-    use tokio::io;
 
-    use crate::out::{Transfer, Writable};
+    use crate::out::{Buffer, Transfer};
 
     #[derive()]
     pub struct PrefixedOptional<T>(Option<T>);
 
-    impl<T> PrefixedOptional<T>
-    where
-        T: Transfer,
-    {
-        pub fn some(transferable: T) -> PrefixedOptional<T> {
-            PrefixedOptional(Some(transferable))
+    impl<T> PrefixedOptional<T> {
+        pub fn some(val: T) -> PrefixedOptional<T> {
+            PrefixedOptional(Some(val))
         }
 
         pub fn none() -> PrefixedOptional<T> {
             PrefixedOptional(Option::None)
         }
 
-        pub fn new(transferable_opt: Option<T>) -> PrefixedOptional<T> {
-            PrefixedOptional(transferable_opt)
+        pub fn new(val_opt: Option<T>) -> PrefixedOptional<T> {
+            PrefixedOptional(val_opt)
         }
     }
 
-    #[async_trait::async_trait]
     impl<T> Transfer for PrefixedOptional<T>
     where
         T: Transfer + Send + Sync,
     {
-        async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-            writeable.write_all(&[self.0.is_some() as u8]).await?;
+        fn write_bytes(&self, buf: &mut Buffer) {
+            buf.write_all(&[self.0.is_some() as u8]);
 
-            match self.0 {
-                Some(ref t) => t.write_data(writeable).await,
-                None => Ok(()),
+            if let Some(ref t) = self.0 {
+                t.write_bytes(buf);
             }
         }
     }

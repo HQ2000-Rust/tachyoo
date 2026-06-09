@@ -1,18 +1,16 @@
 use either::Either;
-use tokio::io;
 
-use crate::out::{Transfer, Writable};
+use crate::out::{Buffer, Transfer};
 
-#[async_trait::async_trait]
 impl<L, R> Transfer for Either<L, R>
 where
     L: Transfer + Send + Sync,
     R: Transfer + Send + Sync,
 {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
+    fn write_bytes(&self, buf: &mut Buffer) {
         match self {
-            Either::Left(left) => left.write_data(writeable).await,
-            Either::Right(right) => right.write_data(writeable).await,
-        }
+            Either::Left(left) => left.write_bytes(buf),
+            Either::Right(right) => right.write_bytes(buf),
+        };
     }
 }

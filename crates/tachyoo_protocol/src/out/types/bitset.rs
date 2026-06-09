@@ -1,11 +1,7 @@
 //maybe just type BitSet = PrefixedArray<Long>??? (TODO)
 
-use std::iter;
-
-use tokio::io;
-
 use crate::out::{
-    Transfer, Writable,
+    Transfer,
     types::{Long, array::PrefixedArray},
 };
 
@@ -27,10 +23,9 @@ impl BitSet {
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for BitSet {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.inner.write_data(writeable).await
+    fn write_bytes(&self, buf: &mut crate::out::Buffer) {
+        self.inner.write_bytes(buf);
     }
 }
 
@@ -58,9 +53,8 @@ impl<const BIT_COUNT: usize> FixedBitSet<BIT_COUNT> {
     //TODO: determine egornomic way for creation
 }
 
-#[async_trait::async_trait]
 impl<const BIT_COUNT: usize> Transfer for FixedBitSet<BIT_COUNT> {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&*self.data).await
+    fn write_bytes(&self, buf: &mut crate::out::Buffer) {
+        buf.write_all(&self.data);
     }
 }

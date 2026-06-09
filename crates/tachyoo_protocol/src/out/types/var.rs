@@ -1,9 +1,7 @@
 ////// INT
 pub mod int {
 
-    use tokio::io;
-
-    use crate::out::{Transfer, Writable};
+    use crate::out::{Buffer, Transfer};
 
     // #[repr(transparent)]
     pub struct VarInt {
@@ -24,18 +22,16 @@ pub mod int {
         }
     }
 
-    #[async_trait::async_trait]
     impl Transfer for VarInt {
-        async fn write_data(&self, writable: &mut Writable) -> io::Result<()> {
-            writable.write_all(&self.data).await
+        fn write_bytes(&self, buf: &mut Buffer) {
+            buf.write_all(&self.data);
         }
     }
 }
 
 pub mod long {
-    use tokio::io;
 
-    use crate::out::{Transfer, Writable};
+    use crate::out::{Buffer, Transfer};
 
     #[repr(transparent)]
     pub struct VarLong {
@@ -56,10 +52,9 @@ pub mod long {
         }
     }
 
-    #[async_trait::async_trait]
     impl Transfer for VarLong {
-        async fn write_data(&self, writable: &mut Writable) -> Result<(), io::Error> {
-            writable.write_all(&self.data).await
+        fn write_bytes(&self, buf: &mut crate::out::Buffer) {
+            buf.write_all(&self.data);
         }
     }
 }

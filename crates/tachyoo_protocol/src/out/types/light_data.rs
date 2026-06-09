@@ -1,7 +1,5 @@
-use tokio::io;
-
 use crate::out::{
-    Transfer, Writable,
+    Buffer, Transfer,
     types::{Byte, array::PrefixedArray, bitset::BitSet},
 };
 
@@ -36,16 +34,13 @@ impl LightData {
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for LightData {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.sky_light_mask.write_data(writeable).await?;
-        self.block_light_mask.write_data(writeable).await?;
-        self.empty_sky_light_mask.write_data(writeable).await?;
-        self.empty_block_light_mask.write_data(writeable).await?;
-        self.sky_light_arrays.write_data(writeable).await?;
-        self.block_light_arrays.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.sky_light_mask.write_bytes(buf);
+        self.block_light_mask.write_bytes(buf);
+        self.empty_sky_light_mask.write_bytes(buf);
+        self.empty_block_light_mask.write_bytes(buf);
+        self.sky_light_arrays.write_bytes(buf);
+        self.block_light_arrays.write_bytes(buf);
     }
 }
