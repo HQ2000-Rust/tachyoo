@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{io::Write, marker::PhantomData};
 
 use flate2::{Compress, write::ZlibEncoder};
 use tokio::io::AsyncWriteExt;
@@ -11,10 +11,15 @@ pub enum Packet<T> {
     Uncompressed {
         len: VarInt,
         id: VarInt,
-        data: T,
+        //TODO: tmp
+        data: Box<[u8]>,
+        phantom: PhantomData<T>,
     },
     Compressed {
-
+        len: VarInt,
+        //TODO: tmp
+        data: Box<[u8]>,
+        phantom: PhantomData<(T, VarInt)>,
     },
 }
 
@@ -25,7 +30,7 @@ pub enum Compression {
         // (negative would mean uncompressed)
         threshold: i32,
         level: flate2::Compression,
-    }
+    },
 }
 
 /*
@@ -41,25 +46,57 @@ impl<T> Compressed<T> where T: Transfer {
 }*/
 
 impl<T: Transfer> Packet<T> {
-    pub async fn new(id: i32, data: T, compression: Compression) -> Packet<T>
-    where T: Transfer {
-        let buf=Vec::new();
-
-        pollster::block_on(data.write)
+    pub async fn new(id: i32, transfer: T, compression: Compression) -> Packet<T>
+    where
+        T: Transfer,
+    {
+        let mut data = transfer.data();
 
         if let Compression::Compressed { threshold, level } = compression {
-            Packet::Compressed {
+            //tmp
+            if data.len() as i32 >= threshold {
+                data = compress(&data, level);
+            }
 
+            Packet::Compressed {
+                len: VarInt::new(data.len() as i32),
+                data,
+                phantom: PhantomData,
             }
         } else {
-            Packet::Uncompressed { len: , id, data }
+            Packet::Uncompressed {
+                len: VarInt::new(data.len() as i32),
+                id: VarInt::new(id),
+                data,
+                phantom: PhantomData,
+            }
         }
     }
 
-    pub fn actual_len(&self) -> usize {
-        //self.bytes.len() + 1 // self.packet_id
-        todo!()
+    pub async fn send(&self, mut stream: tokio::net::TcpStream) -> tokio::io::Result<()> {
+        match self {
+            Packet::Compressed { len, data, phantom } => {
+                stream.write_all(&len.data()).await?;
+                stream.write_all(&data).await
+            }
+            Packet::Uncompressed {
+                len,
+                id,
+                data,
+                phantom,
+            } => {
+                stream.write_all(&len.data()).await?;
+                stream.write_all(&data).await
+            }
+        }
     }
+}
 
-    pub fn send(&self, stream: tokio::net::TcpStream) {}
+//tmp!!!
+fn compress(data: &[u8], level: flate2::Compression) -> Box<[u8]> {
+    let mut vec = Vec::new();
+    let mut compressor = ZlibEncoder::new(&mut vec, level);
+    compressor.write_all(&data).unwrap();
+    drop(compressor);
+    vec.into_boxed_slice()
 }
