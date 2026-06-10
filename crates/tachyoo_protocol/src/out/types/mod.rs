@@ -3,9 +3,7 @@
 
 use std::ops::Deref;
 
-use tokio::io;
-
-use crate::out::{Transfer, Writable, types::array::Array};
+use crate::out::{Buffer, Transfer, types::array::Array};
 
 pub mod array;
 pub mod bitset;
@@ -17,101 +15,91 @@ pub mod light_data;
 pub mod option;
 pub mod pos;
 pub mod profile;
+pub mod recipe_display;
 pub mod registry_data;
 pub mod registry_refs;
+pub mod slot_display;
 pub mod string;
 pub mod teleport_flags;
 pub mod var;
-pub mod recipe_display;
-pub mod slot_display;
 
 pub type Boolean = bool;
 
-#[async_trait::async_trait]
 impl Transfer for Boolean {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&[*self as u8]).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&(*self as u8).to_be_bytes());
     }
 }
 
 pub type Byte = i8;
 
-#[async_trait::async_trait]
 impl Transfer for Byte {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&[*self as u8]).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type UByte = u8;
 
-#[async_trait::async_trait]
 impl Transfer for UByte {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&[*self]).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type Short = i16;
 
-#[async_trait::async_trait]
 impl Transfer for Short {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type UShort = u16;
 
-#[async_trait::async_trait]
 impl Transfer for UShort {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
-
 pub type Int = i32;
 
-#[async_trait::async_trait]
 impl Transfer for Int {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type Long = i64;
 
-#[async_trait::async_trait]
 impl Transfer for Long {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type Float = f32;
 
-#[async_trait::async_trait]
 impl Transfer for Float {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
 pub type Double = f64;
 
-#[async_trait::async_trait]
 impl Transfer for Double {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 
+//TODO
 pub type UUID = u128;
 
-#[async_trait::async_trait]
 impl Transfer for UUID {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        writeable.write_all(&self.to_be_bytes()).await
+    fn write_bytes(&self, buf: &mut Buffer) {
+        buf.write_all(&self.to_be_bytes());
     }
 }
 

@@ -1,7 +1,5 @@
-use tokio::io;
-
 use crate::out::{
-    Transfer, Writable,
+    Buffer, Transfer,
     types::{array::Array, identifier::Identifier, option::unprefixed::Optional, var::int::VarInt},
 };
 
@@ -30,16 +28,13 @@ impl<X> IdOrX<X> {
     }
 }
 
-#[async_trait::async_trait]
 impl<X> Transfer for IdOrX<X>
 where
     X: Transfer + Send + Sync,
 {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.id.write_data(writeable).await?;
-        self.x.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.id.write_bytes(buf);
+        self.x.write_bytes(buf);
     }
 }
 
@@ -69,13 +64,10 @@ impl IdSet {
     }
 }
 
-#[async_trait::async_trait]
 impl Transfer for IdSet {
-    async fn write_data(&self, writeable: &mut Writable) -> io::Result<()> {
-        self.ty.write_data(writeable).await?;
-        self.tag_name.write_data(writeable).await?;
-        self.ids.write_data(writeable).await?;
-
-        Ok(())
+    fn write_bytes(&self, buf: &mut Buffer) {
+        self.ty.write_bytes(buf);
+        self.tag_name.write_bytes(buf);
+        self.ids.write_bytes(buf);
     }
 }
