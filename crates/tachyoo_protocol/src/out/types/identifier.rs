@@ -1,7 +1,7 @@
 //WIP
 //TODO: ascii memory optimization, maybe ascii chars (when asciiChar becomes stable)
 
-use crate::out::{Buffer, Transfer};
+use crate::out::{Buffer, Transfer, types::string::{MaxLenMcString, McString, UnlimitedMcString}};
 
 //todo: more efficient and ergonomic (if applicable) repr
 
@@ -80,6 +80,14 @@ impl Identifier {
     }
     fn from_namespace_and_path(namespace: NamespaceId, path: PathId) -> Identifier {
         Identifier { namespace, path }
+    }
+    //TODO: change internal repr; Result instead?
+    fn into_mc_strings(self) -> Option<(MaxLenMcString, MaxLenMcString)> {
+        if let Ok(namespace) = MaxLenMcString::try_from(self.namespace.0) && let Ok(path) = MaxLenMcString::try_from(self.path.0) {
+            Some((namespace, path))
+        } else {
+            None
+        }
     }
 }
 
