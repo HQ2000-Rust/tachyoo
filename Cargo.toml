@@ -1,3 +1,26 @@
 [workspace]
 resolver="3"
 members = ["crates/tachyoo","crates/tachyoo_cli", "crates/tachyoo_data","crates/tachyoo_protocol"]
+
+[workspace.dependencies]
+bevy_ecs = "0.18.1"
+thiserror = "2.0.18"
+tokio = "1.52.3" 
+
+bitflags = "2.13.0"
+bytes = "1.11.1"
+either = "1.16.0"
+flate2 = "1.1.9"
+leb128 = "0.2.6"
+pollster = "0.4.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+tracing = "0.1.44"
+variadics_please = "2.0.0"
+
+
+rustc-hash = "2.1.2"
+
+console-subscriber = "0.5.0"
+
+snafu = "0.9.1"

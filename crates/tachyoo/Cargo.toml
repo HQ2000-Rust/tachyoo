@@ -3,7 +3,20 @@ name = "tachyoo"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default=["dev"]
+dev=["tokio_console", "snafu/backtrace"]
+# RUSTFLAGS="--cfg tokio_unstable" needed!
+tokio_console=["dep:console-subscriber"]
+
 [dependencies]
-bevy_ecs = "0.18.1"
-thiserror = "2.0.18"
-tokio = { version = "1.52.3", features = ["full"] }
+bevy_ecs.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features=["full"]}
+
+tachyoo_protocol= { path="../tachyoo_protocol"}
+rustc-hash.workspace = true
+
+
+console-subscriber= { workspace = true, optional=true} 
+snafu.workspace=true

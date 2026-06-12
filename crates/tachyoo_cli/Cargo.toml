@@ -3,4 +3,10 @@ name = "tachyoo_cli"
 version = "0.1.0"
 edition = "2024"
 
+# TODO: pass through tachyoo features
+
+[features]
+tokio-console=[]
+
 [dependencies]
+tachyoo={ path="../tachyoo" }
