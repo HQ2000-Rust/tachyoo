@@ -1,6 +1,17 @@
+use crate::in_::types::Long;
+
+pub enum Packet {
+    Status(Status),
+    Login(Login),
+    Config(Config),
+    Play(Play),
+}
+
 pub enum Status {
-    StatusRequest = 0,
-    PingRequest = 1,
+    //0
+    StatusRequest,
+    //1
+    PingRequest { timestamp: Long },
 }
 
 pub enum Login {
