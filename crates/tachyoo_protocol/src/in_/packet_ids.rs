@@ -1,4 +1,3 @@
-
 pub enum Status {
     StatusRequest = 0,
     PingRequest = 1,

@@ -1,13 +1,5 @@
-pub enum ProtocolState {
-    Handshake(Handshake),
-    Status(Status),
-    Login(Login),
-    Config(Config),
-    Play(Play),
-}
-
 pub enum Handshake {
-    
+    Intention = 0,
 }
 
 pub enum Status {
