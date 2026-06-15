@@ -1,19 +1,33 @@
-use crate::in_::types::string::McStringError;
+use std::str::FromStr;
+
+use crate::{in_::types::string::McStringError, util::string::ABSOLUTE_MAX_LEN};
 
 pub struct McString<const MAX_LEN: u16> {
     data: Box<str>,
 }
 
 //TODO: move inside the module again?
-pub const ABSOLUTE_MAX_LENGTH: u16 = 32767;
 
-impl<const MAX_LENGTH: u16> McString<MAX_LENGTH> {
-    const __ASSERTION: () = assert!(MAX_LENGTH <= ABSOLUTE_MAX_LENGTH);
+impl<const MAX_LEN: u16> McString<MAX_LEN> {
+    const __ASSERTION: () = assert!(MAX_LEN <= ABSOLUTE_MAX_LEN);
 
-    fn new(str: impl AsRef<str>) -> Result<u16, McStringError> {}
+    fn new(bytes: &[u8]) -> Result<McString<MAX_LEN>, McStringError> {
+        let str = str::from_utf8(bytes).map_err(McStringError::InvalidUtf8)?;
+
+        let (valid, len) = crate::util::string::is_valid_and_len::<MAX_LEN>(str);
+
+        if valid {
+            Ok(McString {
+                //unwrap_infallible isn't stable yet
+                data: String::from_str(str).unwrap().into_boxed_str(),
+            })
+        } else {
+            Err(McStringError::TooLong { len })
+        }
+    }
 
     pub fn len(&self) -> u16 {
-        //invariant!!
+        // invariant!!
         self.data.len() as u16
     }
 }
@@ -21,36 +35,5 @@ impl<const MAX_LENGTH: u16> McString<MAX_LENGTH> {
 impl<const MAX_LEN: u16> AsRef<str> for McString<MAX_LEN> {
     fn as_ref(&self) -> &str {
         &self.data
-    }
-}
-
-//TODO: collapse both impl into one function (mostly)
-impl<const MAX_LENGTH: u16> TryFrom<String> for McString<MAX_LENGTH> {
-    type Error = McStringError;
-
-    fn try_from(string: String) -> Result<Self, Self::Error> {
-        let len = McString::<MAX_LENGTH>::is_valid_and_len(string.as_str())?;
-
-        let len = VarInt::new(len.into());
-
-        Ok(McString {
-            len,
-            data: string.into_boxed_str(),
-        })
-    }
-}
-
-impl<const MAX_LENGTH: u16> TryFrom<Box<str>> for McString<MAX_LENGTH> {
-    type Error = McStringError;
-
-    fn try_from(string: Box<str>) -> Result<Self, Self::Error> {
-        let (valid, len) =
-            crate::util::string::is_valid_and_len::<MAX_LENGTH, MAX_LENGTH>(&*string);
-
-        if valid {
-            Ok(McString { data: string })
-        } else {
-            Err(McStringError::TooLong { len })
-        }
     }
 }

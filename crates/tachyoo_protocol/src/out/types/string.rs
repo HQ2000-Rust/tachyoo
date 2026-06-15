@@ -1,4 +1,7 @@
-use crate::out::{Buffer, Transfer, types::var::int::VarInt};
+use crate::{
+    out::{Buffer, Transfer, types::var::int::VarInt},
+    util::string::ABSOLUTE_MAX_LEN,
+};
 
 //better name!
 pub struct McString<const MAX_LEN: u16> {
@@ -6,9 +9,6 @@ pub struct McString<const MAX_LEN: u16> {
     len: VarInt,
     data: Box<str>,
 }
-
-//TODO: move inside the module again?
-pub const ABSOLUTE_MAX_LEN: u16 = 32767;
 
 impl<const MAX_LEN: u16> McString<MAX_LEN> {
     const __ASSERTION: () = assert!(MAX_LEN <= ABSOLUTE_MAX_LEN);
@@ -30,8 +30,7 @@ impl<const MAX_LEN: u16> TryFrom<String> for McString<MAX_LEN> {
     type Error = McStringError;
 
     fn try_from(string: String) -> Result<Self, Self::Error> {
-        let (valid, len) =
-            crate::util::string::is_valid_and_len::<MAX_LEN, ABSOLUTE_MAX_LEN>(&*string);
+        let (valid, len) = crate::util::string::is_valid_and_len::<MAX_LEN>(&*string);
 
         if valid {
             Ok(McString {
@@ -48,8 +47,7 @@ impl<const MAX_LEN: u16> TryFrom<Box<str>> for McString<MAX_LEN> {
     type Error = McStringError;
 
     fn try_from(string: Box<str>) -> Result<Self, Self::Error> {
-        let (valid, len) =
-            crate::util::string::is_valid_and_len::<MAX_LEN, ABSOLUTE_MAX_LEN>(&*string);
+        let (valid, len) = crate::util::string::is_valid_and_len::<MAX_LEN>(&*string);
 
         if valid {
             Ok(McString {

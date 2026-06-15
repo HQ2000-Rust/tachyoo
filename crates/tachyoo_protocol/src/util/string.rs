@@ -1,5 +1,7 @@
+pub const ABSOLUTE_MAX_LEN: u16 = 32767;
+
 //TODO: correct the length impl (maybe without complete encoding to utf-16)
-pub fn is_valid_and_len<const MAX_LEN: u16, const ABSOLUTE_MAX_LEN: u16>(str: &str) -> (bool, u16) {
+pub fn is_valid_and_len<const MAX_LEN: u16>(str: &str) -> (bool, u16) {
     if str.len() * 2 > MAX_LEN as usize || str.len() * 2 > ABSOLUTE_MAX_LEN as usize {
         //return None;
     }
