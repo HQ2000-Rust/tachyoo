@@ -6,7 +6,7 @@ use leb128::read::Error::{IoError, Overflow};
 use tokio::io::AsyncReadExt;
 
         pub async fn read<R: AsyncReadExt + Unpin>(reader: &mut R) -> io::Result<i64> {
-            let buf=[0u8;10];
+            let mut buf=[0u8;10];
 
             
             

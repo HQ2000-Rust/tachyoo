@@ -1,3 +1,5 @@
 pub struct ClientId();
 
-pub struct ClientData {}
+pub struct ClientData {
+    intent: Option<Intent>,
+}

@@ -1,9 +1,10 @@
 use std::net::IpAddr;
 
-
 use crate::{in_::types::string::str::McStr, out::types::string::McString};
 
-pub fn parse(data: McString<255>) -> Hostname {}
+pub fn parse(data: McString<255>) -> Hostname {
+    todo!()
+}
 
 pub enum ServerAddr {
     IpAddr(IpAddr),
@@ -21,7 +22,7 @@ impl Hostname {
         '-',
     ];
 
-    const A: ()=assert!(size_of::<Hostname>() < 10);
+    const A: () = assert!(size_of::<Hostname>() < 10);
 
     fn new(name: McStr<'_, 255>) -> Result<Hostname, HostnameError> {
         for (idx, char) in name.as_ref().chars().enumerate() {
@@ -31,11 +32,8 @@ impl Hostname {
         }
         Ok(Hostname(()))
     }
-
 }
 
 pub enum HostnameError {
-    InvalidChar {
-        pos: u8,
-    }
+    InvalidChar { pos: u8 },
 }

@@ -1,6 +1,9 @@
 use std::str::FromStr;
 
-use crate::{in_::types::string::{McStringError, str::McStr}, util::string::ABSOLUTE_MAX_LEN};
+use crate::{
+    in_::types::string::{McStringError, str::McStr},
+    util::string::ABSOLUTE_MAX_LEN,
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct McString<const MAX_LEN: u16> {

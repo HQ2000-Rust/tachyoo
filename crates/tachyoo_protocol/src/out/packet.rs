@@ -56,9 +56,9 @@ impl<T: Transfer> Packet<T> {
         let mut data = transfer.data();
 
         if let Compression::Compressed { threshold, level } = compression {
-            //tmp
+            //tmp (TODO: compress beforehand)
             if data.len() as i32 >= threshold {
-                data = compress(&data, level);
+                data = tokio::task::block_in_place(|| compress(&data, level));
             }
 
             Packet::Compressed {
