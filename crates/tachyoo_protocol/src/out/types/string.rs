@@ -1,41 +1,17 @@
 use crate::out::{Buffer, Transfer, types::var::int::VarInt};
 
 //better name!
-pub struct McString<const MAX_LENGTH: u16> {
+pub struct McString<const MAX_LEN: u16> {
     //max: 32767
     len: VarInt,
     data: Box<str>,
 }
 
 //TODO: move inside the module again?
-pub const ABSOLUTE_MAX_LENGTH: u16 = 32767;
+pub const ABSOLUTE_MAX_LEN: u16 = 32767;
 
-impl<const MAX_LENGTH: u16> McString<MAX_LENGTH> {
-    const __ASSERTION: () = assert!(MAX_LENGTH <= ABSOLUTE_MAX_LENGTH);
-
-    fn is_valid_and_len(str: impl AsRef<str>) -> Result<u16, McStringError> {
-        let str = str.as_ref();
-
-        if str.len() * 2 > ABSOLUTE_MAX_LENGTH as usize || str.len() * 2 > MAX_LENGTH as usize {
-            return Err(McStringError(()));
-        }
-
-        let mut len = 0;
-
-        for char in str.chars() {
-            if char > '\u{FFFF}' {
-                len += 2;
-            } else {
-                len += 1;
-            }
-        }
-
-        if len > MAX_LENGTH {
-            Err(McStringError(()))
-        } else {
-            Ok(len)
-        }
-    }
+impl<const MAX_LEN: u16> McString<MAX_LEN> {
+    const __ASSERTION: () = assert!(MAX_LEN <= ABSOLUTE_MAX_LEN);
 
     pub fn len(&self) -> u16 {
         //invariant!!
@@ -50,30 +26,39 @@ impl<const MAX_LEN: u16> AsRef<str> for McString<MAX_LEN> {
 }
 
 //TODO: collapse both impl into one function (mostly)
-impl<const MAX_LENGTH: u16> TryFrom<String> for McString<MAX_LENGTH> {
+impl<const MAX_LEN: u16> TryFrom<String> for McString<MAX_LEN> {
     type Error = McStringError;
 
     fn try_from(string: String) -> Result<Self, Self::Error> {
-        let len = McString::<MAX_LENGTH>::is_valid_and_len(string.as_str())?;
+        let (valid, len) =
+            crate::util::string::is_valid_and_len::<MAX_LEN, ABSOLUTE_MAX_LEN>(&*string);
 
-        let len = VarInt::new(len.into());
-
-        Ok(McString {
-            len,
-            data: string.into_boxed_str(),
-        })
+        if valid {
+            Ok(McString {
+                len: VarInt::new(len.into()),
+                data: string.into_boxed_str(),
+            })
+        } else {
+            Err(McStringError(()))
+        }
     }
 }
 
-impl<const MAX_LENGTH: u16> TryFrom<Box<str>> for McString<MAX_LENGTH> {
+impl<const MAX_LEN: u16> TryFrom<Box<str>> for McString<MAX_LEN> {
     type Error = McStringError;
 
     fn try_from(string: Box<str>) -> Result<Self, Self::Error> {
-        let len = McString::<MAX_LENGTH>::is_valid_and_len(&*string)?;
+        let (valid, len) =
+            crate::util::string::is_valid_and_len::<MAX_LEN, ABSOLUTE_MAX_LEN>(&*string);
 
-        let len = VarInt::new(len.into());
-
-        Ok(McString { len, data: string })
+        if valid {
+            Ok(McString {
+                len: VarInt::new(len.into()),
+                data: string,
+            })
+        } else {
+            Err(McStringError(()))
+        }
     }
 }
 
@@ -81,11 +66,11 @@ impl<const MAX_LENGTH: u16> TryFrom<Box<str>> for McString<MAX_LENGTH> {
 #[error("Failed to convert into a McString")]
 pub struct McStringError(());
 
-impl<const MAX_LENGTH: u16> Transfer for McString<MAX_LENGTH> {
+impl<const MAX_LEN: u16> Transfer for McString<MAX_LEN> {
     fn write_bytes(&self, buf: &mut Buffer) {
         self.len.write_bytes(buf);
         buf.write_all(self.data.as_bytes());
     }
 }
 
-pub type MaxLenMcString = McString<ABSOLUTE_MAX_LENGTH>;
+pub type MaxLenMcString = McString<ABSOLUTE_MAX_LEN>;
