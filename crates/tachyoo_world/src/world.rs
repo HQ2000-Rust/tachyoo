@@ -8,13 +8,12 @@ pub struct Tick;
 
 pub struct World {
     ecs_world: EcsWorld,
-    
 }
 
 impl World {
     fn new(config: WorldConfig) -> World {
-        let ecs_world=EcsWorld::new();
-        
+        let ecs_world = EcsWorld::new();
+
         World { ecs_world }
     }
 }

@@ -1,3 +1,1 @@
-pub struct WorldConfig {
-    
-}
+pub struct WorldConfig {}

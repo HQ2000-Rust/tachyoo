@@ -5,7 +5,6 @@ pub enum Handshake {
 pub enum Status {
     StatusResponse = 0,
     PongResponse = 1,
-    
 }
 
 pub enum Login {
@@ -181,4 +180,3 @@ pub enum Play {
     ClearDialog = 137,
     ShowDialog = 138,
 }
-

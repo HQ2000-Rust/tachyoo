@@ -1,4 +1,3 @@
-
 #[derive(Debug, thiserror::Error)]
 #[error("the VarInt wouldn't fit into 32 bits")]
 pub struct VarIntError(());
