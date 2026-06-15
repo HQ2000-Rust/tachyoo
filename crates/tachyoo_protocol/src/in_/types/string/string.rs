@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::{in_::types::string::McStringError, util::string::ABSOLUTE_MAX_LEN};
+use crate::{in_::types::string::{McStringError, str::McStr}, util::string::ABSOLUTE_MAX_LEN};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct McString<const MAX_LEN: u16> {
@@ -30,6 +30,12 @@ impl<const MAX_LEN: u16> McString<MAX_LEN> {
     pub fn len(&self) -> u16 {
         // invariant!!
         self.data.len() as u16
+    }
+
+    pub fn as_mc_str(&self) -> McStr<'_, MAX_LEN> {
+        //TODO: I think this could be avoided via a type-safe wrapper around str
+        //McString has the same invariant as McString
+        McStr::<'_, MAX_LEN>::from_str_unchecked(&self.data)
     }
 }
 

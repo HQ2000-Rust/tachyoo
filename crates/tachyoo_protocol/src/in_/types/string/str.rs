@@ -28,6 +28,11 @@ impl<'a, const MAX_LEN: u16> McStr<'a, MAX_LEN> {
     pub fn len(&self) -> u16 {
         self.data.len() as u16
     }
+
+    //needs to be a valid McStr
+    pub fn from_str_unchecked(str: &str) -> McStr<'_, MAX_LEN> {
+        McStr { data: str }
+    }
 }
 
 impl<const MAX_LEN: u16> AsRef<str> for McStr<'_, MAX_LEN> {
