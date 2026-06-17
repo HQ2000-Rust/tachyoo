@@ -1,3 +1,5 @@
+
+#[derive(Debug)]
 pub enum Play {
     BlockEntityTagQuery = 1,
     BundleItemSelected = 2,

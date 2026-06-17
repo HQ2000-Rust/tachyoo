@@ -1,15 +1,23 @@
-use std::net::IpAddr;
+use std::{io, net::IpAddr};
+
+use tokio::io::AsyncReadExt;
 
 use crate::{in_::types::string::str::McStr, out::types::string::McString};
 
-//for manual creation?
-pub fn parse(data: McString<255>) -> Hostname {
-    todo!()
+pub async fn parse_server_addr<R: AsyncReadExt + Unpin>(reader: &mut R, len: usize) -> io::Result<ServerAddr> {
+    let mut buf=[0u8;255];
+    reader.read_exact(&mut buf[0..len]).await?;
+
+    
+    
+    Ok(ServerAddr::Data(Vec::from(&buf[0..len])))
 }
 
+#[derive(Debug)]
 pub enum ServerAddr {
-    IpAddr(IpAddr),
-    Hostname(Hostname),
+    Data(Vec<u8>)
+    //IpAddr(IpAddr),
+    //Hostname(Hostname),
 }
 
 //TODO: what's a good repr?

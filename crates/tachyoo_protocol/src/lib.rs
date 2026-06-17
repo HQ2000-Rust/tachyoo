@@ -1,4 +1,5 @@
 //#![feature(generic_const_exprs)]
+#![feature(ascii_char)]
 
 //better name?
 pub mod constants;

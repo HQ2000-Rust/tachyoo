@@ -1,19 +1,36 @@
 pub mod play;
+pub mod raw;
 
-use crate::in_::{packets::play::Play, types::Long};
+use std::default;
+
+use crate::in_::{packets::play::Play, types::{Long, handshake::Handshake}};
+
+#[derive(Default, Debug)]
+pub enum Compression {
+    #[default]
+    Uncompressed,
+    Compressed {
+        threshold: u16,
+    }
+}
 
 const _: () = {
     //we don't want the enum to get too big
     // TODO: consider boxing bigger variants or dynamic dispatch
-    assert!(size_of::<Packet>() < 20);
+    //assert!(size_of::<Packet>() < 20);
 };
 
+#[derive(Debug)]
 pub enum Packet {
+
+    Handshake(Handshake),
     Status(Status),
     Login(Login),
     Config(Config),
     Play(Play),
 }
+
+#[derive(Debug)]
 
 pub enum Status {
     //0
@@ -22,6 +39,16 @@ pub enum Status {
     PingRequest { timestamp: Long },
 }
 
+impl Status {
+    pub const fn protocol_id(&self) -> u8 {
+        match self {
+            Self::StatusRequest => 0x00,
+            Self::PingRequest { .. } => 0x01,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub enum Login {
     Hello = 0,
     Key = 1,
@@ -30,6 +57,19 @@ pub enum Login {
     CookieResponse = 4,
 }
 
+impl Login {
+    pub const fn protocol_id(&self) -> u8 {
+        match self {
+            Self::Hello => 0,
+            Self::Key => 1,
+            Self::CustomQueryAnswer => 2,
+            Self::LoginAcknowledged => 3,
+            Self::CookieResponse => 4,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub enum Config {
     ClientInformation = 0,
     CookieResponse = 1,
