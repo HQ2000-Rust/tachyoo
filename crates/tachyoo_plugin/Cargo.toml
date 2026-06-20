@@ -1,0 +1,23 @@
+[package]
+name = "tachyoo_plugin"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+dev=[]
+
+[dependencies]
+wasmtime = { version = "45.0.2", default-features= false, features=[
+    "runtime",
+    #neccessary??
+    "cranelift",
+    "parallel-compilation",
+    # "cache",
+    # "pooling-allocator",
+    "demangle",
+    "coredump",
+    "component-model",
+    "gc",
+    "threads",
+
+] }
