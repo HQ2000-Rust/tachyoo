@@ -1,6 +1,6 @@
-use std::convert::Infallible;
+use std::{convert::Infallible, pin::Pin, task::Poll};
 
-use tokio::{select, sync::watch};
+use tokio::{io::{AsyncRead, AsyncReadExt}, pin, select, sync::watch};
 use tokio_util::sync::CancellationToken;
 
 use crate::ShutdownMsg;
@@ -21,5 +21,22 @@ where
         _ = cancel_token.cancelled() => {
             return Ok(());
         }
+    }
+}
+
+pub struct DebugReader<R: AsyncRead + Unpin>(pub R);
+
+impl<R: AsyncRead + Unpin> AsyncRead for DebugReader<R> {
+    fn poll_read(
+        mut self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+        buf: &mut tokio::io::ReadBuf<'_>,
+    ) -> std::task::Poll<std::io::Result<()>>
+    {
+        let res=AsyncRead::poll_read(Pin::new(&mut self.0), cx, buf);
+        if res.is_ready() {
+            eprintln!("data: {:?}", buf)
+        }
+        res
     }
 }
